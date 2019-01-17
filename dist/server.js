@@ -6,7 +6,7 @@ var _app = _interopRequireDefault(require("./app"));
 
 var _worker = _interopRequireDefault(require("./worker"));
 
-var port = 5000;
+var port = process.env.PORT || 5000;
 
 _app.default.listen(port, function () {
   console.log("Example app listening on port ".concat(port, "!"));
