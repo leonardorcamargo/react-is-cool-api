@@ -10,4 +10,6 @@ var port = process.env.PORT || 5000;
 
 _app.default.listen(port, function () {
   console.log("Example app listening on port ".concat(port, "!"));
-}); // worker.start()
+});
+
+_worker.default.start();
