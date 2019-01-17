@@ -25,7 +25,7 @@ function () {
   function Worker() {
     (0, _classCallCheck2.default)(this, Worker);
     this.timePost = 10000;
-    this.maxRecord = 1440;
+    this.maxRecord = 500;
     this.qtdInterval = 50;
   }
 
