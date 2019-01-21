@@ -18,8 +18,12 @@ app.use((err, req, res, next) => {
 })
 
 app.get('/presences', cors(), async (req, res) => {
-    const { since } = req.query
-    const data = await service.getPresences(since ? new Date(since) : null)
+    const { since, page, amount } = req.query
+    const data = await service.getPresences({
+		since: new Date(since),
+		page,
+		amount
+	})
 	res.send(data)
 })
 

@@ -1,55 +1,30 @@
-const { readFile, writeFile } = require('fs')
-const { promisify } = require('util')
+const db = require('../db')
 
-const readFileAsync = promisify(readFile)
-const writeFileAsync = promisify(writeFile)
+async function getPresences(query = {}) {
+    const { presence, page, amount } = query
 
-async function getPresences(since) {
-    const data = await readFilePresences()
-
-    if (!since) return data
-    return data.filter(item => new Date(item.entryTime) > since)
-}
-
-async function setPresence(presence) {
-    if (!presence) return false
-
-    const data = await readFilePresences()
-    data.push(presence)
-    await writeFilePresences(data)
-    return data
-}
-
-async function deletePresence(id) {
-    let data = []
-    if (id) {
-        data = await readFilePresences()
-        data = data.filter(item => item._id !== id)
+    let presences = await db.getPresences()
+    if (presence) {
+        presences = presences.filter(item => item.presence === presence)
     }
+    const length = presences.length
+    const pages = Math.ceil(length / (amount || length))
+    const currentPage = (page > pages ? pages : page) || 1
     
-    await writeFilePresences(data)
-    return true
-}
-
-async function writeFilePresences(data) {
-    try {
-        await writeFileAsync('./src/service/presences.json', JSON.stringify(data))
-    } catch(e) {
-        throw e
+    if (amount && pages > 1) {
+        const firstIndex = (currentPage - 1) * amount
+        const lastIndex = (currentPage * amount) - 1
+        presences = presences.filter((item, index) => index >= firstIndex && index <= lastIndex)
     }
-}
 
-async function readFilePresences() {
-    const dataFile = await readFileAsync('./src/service/presences.json')
-    try {
-        return JSON.parse(dataFile.toString())
-    } catch(e) {
-        return []
+    return {
+        length,
+        page: currentPage,
+        pages,
+        result: presences
     }
 }
 
 module.exports = {
-    getPresences,
-    setPresence,
-    deletePresence
+    getPresences
 }

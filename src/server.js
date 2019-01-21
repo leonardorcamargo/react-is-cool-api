@@ -6,4 +6,4 @@ app.listen(port, () => {
 	console.log(`Example app listening on port ${port}!`)
 })
 
-worker.start()
+worker.start(400)
