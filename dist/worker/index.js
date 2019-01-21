@@ -15,7 +15,7 @@ var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/cl
 
 var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
 
-var _service = _interopRequireDefault(require("../service"));
+var _db = _interopRequireDefault(require("../db"));
 
 var _utils = require("../utils");
 
@@ -37,21 +37,32 @@ function () {
       _regenerator.default.mark(function _callee3() {
         var _this = this;
 
-        var count, presence, presences, item, date;
+        var timeLoop,
+            count,
+            presence,
+            loop,
+            presences,
+            item,
+            date,
+            intervalPostId,
+            intervalRemoveId,
+            _args3 = arguments;
         return _regenerator.default.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
+                timeLoop = _args3.length > 0 && _args3[0] !== undefined ? _args3[0] : 0;
                 count = this.qtdInterval;
                 presence = false;
-                _context3.next = 4;
-                return _service.default.getPresences();
+                loop = timeLoop;
+                _context3.next = 6;
+                return _db.default.getPresences({});
 
-              case 4:
+              case 6:
                 presences = _context3.sent;
                 item = presences[presences.length - 1];
                 date = item ? new Date(item.exitTime) : new Date();
-                setInterval(
+                intervalPostId = setInterval(
                 /*#__PURE__*/
                 (0, _asyncToGenerator2.default)(
                 /*#__PURE__*/
@@ -76,21 +87,30 @@ function () {
                             exitTime: exitTime
                           };
                           _context.next = 7;
-                          return _service.default.setPresence(item);
+                          return _db.default.setPresence(item);
 
                         case 7:
                           date.setMinutes(date.getMinutes() + 1);
                           count--;
                           console.log(new Date(), 'Registro de presença gravada');
 
-                        case 10:
+                          if (timeLoop) {
+                            loop--;
+
+                            if (loop <= 0) {
+                              console.log(new Date(), 'Finalizou rotina que adiciona registros');
+                              clearInterval(intervalPostId);
+                            }
+                          }
+
+                        case 11:
                         case "end":
                           return _context.stop();
                       }
                     }
                   }, _callee, this);
                 })), this.timePost);
-                setInterval(
+                intervalRemoveId = setInterval(
                 /*#__PURE__*/
                 (0, _asyncToGenerator2.default)(
                 /*#__PURE__*/
@@ -101,7 +121,7 @@ function () {
                       switch (_context2.prev = _context2.next) {
                         case 0:
                           _context2.next = 2;
-                          return _service.default.getPresences();
+                          return _db.default.getPresences({});
 
                         case 2:
                           presences = _context2.sent;
@@ -123,7 +143,7 @@ function () {
                           }
 
                           _context2.next = 11;
-                          return _service.default.deletePresence(presences[i]._id);
+                          return _db.default.deletePresence(presences[i]._id);
 
                         case 11:
                           i++;
@@ -131,6 +151,12 @@ function () {
                           break;
 
                         case 14:
+                          if (timeLoop && loop <= 0) {
+                            console.log(new Date(), 'Finalizou rotina que remove registros');
+                            clearInterval(intervalRemoveId);
+                          }
+
+                        case 15:
                         case "end":
                           return _context2.stop();
                       }
@@ -138,7 +164,7 @@ function () {
                   }, _callee2, this);
                 })), 60000);
 
-              case 9:
+              case 11:
               case "end":
                 return _context3.stop();
             }

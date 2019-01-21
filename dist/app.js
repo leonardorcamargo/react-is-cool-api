@@ -21,6 +21,7 @@ var _service = _interopRequireDefault(require("./service"));
 
 var app = (0, _express.default)();
 app.use(_bodyParser.default.json());
+app.use((0, _cors.default)());
 app.use('/presences', function (req, res, next) {
   console.log('Chamada da rota /presences');
   next();
@@ -29,20 +30,25 @@ app.use(function (err, req, res, next) {
   console.log('Something goes wrong!');
   res.status(500).send(err.message);
 });
-app.get('/presences', (0, _cors.default)(),
+app.get('/presences',
 /*#__PURE__*/
 function () {
   var _ref = (0, _asyncToGenerator2.default)(
   /*#__PURE__*/
   _regenerator.default.mark(function _callee(req, res) {
-    var since, data;
+    var _req$query, since, page, amount, data;
+
     return _regenerator.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            since = req.query.since;
+            _req$query = req.query, since = _req$query.since, page = _req$query.page, amount = _req$query.amount;
             _context.next = 3;
-            return _service.default.getPresences(since ? new Date(since) : null);
+            return _service.default.getPresences({
+              since: new Date(since),
+              page: page,
+              amount: amount
+            });
 
           case 3:
             data = _context.sent;
