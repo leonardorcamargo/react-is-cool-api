@@ -6,6 +6,7 @@ import service from './service'
 const app = express()
 
 app.use(bodyParser.json())
+app.use(cors())
 
 app.use('/presences',(req, res, next) => {
 	console.log('Chamada da rota /presences')
@@ -17,7 +18,7 @@ app.use((err, req, res, next) => {
 	res.status(500).send(err.message)
 })
 
-app.get('/presences', cors(), async (req, res) => {
+app.get('/presences', async (req, res) => {
     const { since, page, amount } = req.query
     const data = await service.getPresences({
 		since: new Date(since),
