@@ -61,4 +61,4 @@ typings/
 .next
 
 # arquivo de dados json
-./src/db/presences.json
+src/db/presences.json
