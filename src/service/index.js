@@ -1,11 +1,21 @@
 const db = require('../db')
 
 async function getPresences(query = {}) {
-    const { presence, page, amount } = query
+    const { presence, agroup, page, amount } = query
 
     let presences = await db.getPresences()
+    if (agroup) {
+        presences = presences.reduce((acc, cur) => {
+            if (acc.length && acc[acc.length - 1].presence === cur.presence) {
+                acc[acc.length -1].exitTime = cur.exitTime;
+                return acc;
+            }
+            acc.push(cur);
+            return acc;
+        }, []);
+    }
     if (presence) {
-        presences = presences.filter(item => item.presence === presence)
+        presences = presences.filter(item => item.presence.toString() === presence.toString())
     }
     const length = presences.length
     const pages = Math.ceil(length / (amount || length))
@@ -19,7 +29,7 @@ async function getPresences(query = {}) {
 
     return {
         length,
-        page: currentPage,
+        page: Number(currentPage),
         pages,
         result: presences
     }

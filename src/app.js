@@ -19,12 +19,7 @@ app.use((err, req, res, next) => {
 })
 
 app.get('/presences', async (req, res) => {
-    const { since, page, amount } = req.query
-    const data = await service.getPresences({
-		since: new Date(since),
-		page,
-		amount
-	})
+    const data = await service.getPresences(req.query)
 	res.send(data)
 })
 
