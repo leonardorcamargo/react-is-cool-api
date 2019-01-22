@@ -18,6 +18,7 @@ function _getPresences() {
   _regenerator.default.mark(function _callee() {
     var query,
         presence,
+        agroup,
         page,
         amount,
         presences,
@@ -32,16 +33,28 @@ function _getPresences() {
         switch (_context.prev = _context.next) {
           case 0:
             query = _args.length > 0 && _args[0] !== undefined ? _args[0] : {};
-            presence = query.presence, page = query.page, amount = query.amount;
+            presence = query.presence, agroup = query.agroup, page = query.page, amount = query.amount;
             _context.next = 4;
             return db.getPresences();
 
           case 4:
             presences = _context.sent;
 
+            if (agroup) {
+              presences = presences.reduce(function (acc, cur) {
+                if (acc.length && acc[acc.length - 1].presence === cur.presence) {
+                  acc[acc.length - 1].exitTime = cur.exitTime;
+                  return acc;
+                }
+
+                acc.push(cur);
+                return acc;
+              }, []);
+            }
+
             if (presence) {
               presences = presences.filter(function (item) {
-                return item.presence === presence;
+                return item.presence.toString() === presence.toString();
               });
             }
 
@@ -59,12 +72,12 @@ function _getPresences() {
 
             return _context.abrupt("return", {
               length: length,
-              page: currentPage,
+              page: Number(currentPage),
               pages: pages,
               result: presences
             });
 
-          case 11:
+          case 12:
           case "end":
             return _context.stop();
         }

@@ -36,25 +36,19 @@ function () {
   var _ref = (0, _asyncToGenerator2.default)(
   /*#__PURE__*/
   _regenerator.default.mark(function _callee(req, res) {
-    var _req$query, since, page, amount, data;
-
+    var data;
     return _regenerator.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            _req$query = req.query, since = _req$query.since, page = _req$query.page, amount = _req$query.amount;
-            _context.next = 3;
-            return _service.default.getPresences({
-              since: new Date(since),
-              page: page,
-              amount: amount
-            });
+            _context.next = 2;
+            return _service.default.getPresences(req.query);
 
-          case 3:
+          case 2:
             data = _context.sent;
             res.send(data);
 
-          case 5:
+          case 4:
           case "end":
             return _context.stop();
         }
